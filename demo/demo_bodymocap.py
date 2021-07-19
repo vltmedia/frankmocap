@@ -148,8 +148,8 @@ def run_body_mocap(args, body_bbox_detector, body_mocap, visualizer):
         print(f"Processed : {image_path}")
 
     print("Output Prediction path", os.path.join(args.out_dir , "predictions.json"))
-    with open('data.txt', 'w') as outfile:
-        json.dump(os.path.join(args.out_dir , "predictions.json"), outfile)
+    with open(os.path.join(args.out_dir , "predictions.json"), 'w') as outfile:
+        json.dump(outputpredictions, outfile)
     #save images as a video
     if not args.no_video_out and input_type in ['video', 'webcam']:
         demo_utils.gen_video_out(args.out_dir, args.seq_name)
