@@ -29,6 +29,7 @@ def run_body_mocap(args, body_bbox_detector, body_mocap, visualizer):
     cur_frame = args.start_frame
     video_frame = 0
     timer = Timer()
+    outputpredictions = {"Predictions": []}
     while True:
         timer.tic()
         # load data
@@ -117,10 +118,8 @@ def run_body_mocap(args, body_bbox_detector, body_mocap, visualizer):
         print("pred_output_list | ",pred_output_list)
         print("---------------------------------------------- ")
         print("---------------------------------------------- ")
-        args = DemoOptions().parse()
-        with open('data.txt', 'w') as outfile:
-            json.dump(os.path.join(args.out_dir , "predictions.json"), outfile)
-            
+
+        outputpredictions["Predictions"].append(pred_output_list)
         # extract mesh for rendering (vertices in image space and faces) from pred_output_list
         pred_mesh_list = demo_utils.extract_mesh_from_output(pred_output_list)
 
@@ -148,6 +147,9 @@ def run_body_mocap(args, body_bbox_detector, body_mocap, visualizer):
         timer.toc(bPrint=True,title="Time")
         print(f"Processed : {image_path}")
 
+    print("Output Prediction path", os.path.join(args.out_dir , "predictions.json"))
+    with open('data.txt', 'w') as outfile:
+        json.dump(os.path.join(args.out_dir , "predictions.json"), outfile)
     #save images as a video
     if not args.no_video_out and input_type in ['video', 'webcam']:
         demo_utils.gen_video_out(args.out_dir, args.seq_name)
