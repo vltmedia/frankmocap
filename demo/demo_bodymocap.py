@@ -1,5 +1,5 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
-
+import json
 import os
 import sys
 import os.path as osp
@@ -117,7 +117,10 @@ def run_body_mocap(args, body_bbox_detector, body_mocap, visualizer):
         print("pred_output_list | ",pred_output_list)
         print("---------------------------------------------- ")
         print("---------------------------------------------- ")
-        
+        args = DemoOptions().parse()
+        with open('data.txt', 'w') as outfile:
+            json.dump(os.path.join(args.out_dir , "predictions.json"), outfile)
+            
         # extract mesh for rendering (vertices in image space and faces) from pred_output_list
         pred_mesh_list = demo_utils.extract_mesh_from_output(pred_output_list)
 
