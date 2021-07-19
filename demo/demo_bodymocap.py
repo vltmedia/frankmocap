@@ -22,6 +22,18 @@ from mocap_utils.timer import Timer
 import renderer.image_utils as imu
 from renderer.viewer2D import ImShow
 
+class NumpyEncoder(json.JSONEncoder):
+    """ Special json encoder for numpy types """
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
+
 def run_body_mocap(args, body_bbox_detector, body_mocap, visualizer):
     #Setup input data to handle different types of inputs
     input_type, input_data = demo_utils.setup_input(args)
@@ -148,8 +160,10 @@ def run_body_mocap(args, body_bbox_detector, body_mocap, visualizer):
         print(f"Processed : {image_path}")
 
     print("Output Prediction path", os.path.join(args.out_dir , "predictions.json"))
+    dumped = json.dumps(outputpredictions["Predictions"], cls=NumpyEncoder)
+
     with open(os.path.join(args.out_dir , "predictions.json"), 'w') as outfile:
-        json.dump(outputpredictions, outfile)
+        json.dump(dumped, outfile)
     #save images as a video
     if not args.no_video_out and input_type in ['video', 'webcam']:
         demo_utils.gen_video_out(args.out_dir, args.seq_name)
